@@ -539,12 +539,19 @@ gherkin_WHEN() {
 }
 
 gherkin_THEN() {
+  local COL=""
+  local NCOL=""
+  if is_terminal; then
+    COL="${YELLOW}"
+    NCOL="${NOCOLOR}"
+  fi
+
 	gherkin_last_then=$(gherkin_strip_arg "$*")
 	gherkin_last_msg=""
-  gherkin_last_msg="${gherkin_last_msg}${YELLOW}SCENARIO${NOCOLOR} $gherkin_last_scenario\n"
-  gherkin_last_msg="${gherkin_last_msg}   ${YELLOW}GIVEN${NOCOLOR} $gherkin_last_given\n"
-  gherkin_last_msg="${gherkin_last_msg}    ${YELLOW}WHEN${NOCOLOR} $gherkin_last_when\n"
-  gherkin_last_msg="${gherkin_last_msg}    ${YELLOW}THEN${NOCOLOR} $gherkin_last_then"
+  gherkin_last_msg="${gherkin_last_msg}${COL}SCENARIO${NCOL} $gherkin_last_scenario\n"
+  gherkin_last_msg="${gherkin_last_msg}   ${COL}GIVEN${NCOL} $gherkin_last_given\n"
+  gherkin_last_msg="${gherkin_last_msg}    ${COL}WHEN${NCOL} $gherkin_last_when\n"
+  gherkin_last_msg="${gherkin_last_msg}    ${COL}THEN${NCOL} $gherkin_last_then"
 }
 
 gherkin_parse()
