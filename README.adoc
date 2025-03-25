@@ -12,7 +12,7 @@ bash_unit - bash unit testing enterprise edition framework for professionals!
 
 == Synopsis
 
-*bash_unit* [-f tap] [-p <pattern>] [-s <pattern>] [-r] [test_file]
+*bash_unit* [-f tap] [-p <pattern>] [-s <pattern>] [-r] [test_file] [-q]
 
 == Description
 
