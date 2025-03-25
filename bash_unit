@@ -554,6 +554,8 @@ gherkin_THEN() {
   gherkin_last_msg="${gherkin_last_msg}    ${COL}THEN${NCOL} $gherkin_last_then"
 }
 
+gherkin_AND() { gherkin_THEN "$@"; }
+
 gherkin_parse()
 {
 	while IFS= read -r line; do
