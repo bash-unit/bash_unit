@@ -12,7 +12,7 @@ bash_unit - bash unit testing enterprise edition framework for professionals!
 
 == Synopsis
 
-*bash_unit* [-f tap] [-p <pattern>] [-s <pattern>] [-r] [test_file] [-q]
+*bash_unit* [-f tap] [-p <pattern>] [-s <pattern>] [-r] [test_file] [-q] [-g]
 
 == Description
 
@@ -75,6 +75,10 @@ _(by the way, the documentation you are reading is itself tested with bash-unit)
   quiet mode.
   Will only output the status of each test with no further
   information even in case of failure.
+
+*-g*::
+  gherkin style.
+  Accept tests written in a Gherkin like style (see "Gherkin" section below).
 
 ifndef::backend-manpage[]
 
@@ -994,3 +998,122 @@ test_get_data_from_fake() {
  expected [ax] but was [a]
 doc:13:test_get_data_from_fake()
 ```
+
+=== Write tests in a Gherkin like style
+*bash_unit* supports to tests written in a 
+[Gherkin](https://cucumber.io/docs/gherkin/reference) like style. You need 
+to run *bash_unit* with the option _-g_ to enable the Gherkin like test style. 
+
+```test-g
+@FEATURE wc can count the number of lines
+
+@SCENARIO calling wc without any arguments should also count the # of lines
+{
+  @GIVEN wc is installed
+  @WHEN running (echo BDD; echo is; echo so; echo cool) | wc
+    output=$((echo BDD; echo is; echo so; echo cool) | wc)
+  @THEN it should print three results
+    assert_equals 3 "$(echo $output | wc -w)" @MSG
+  @AND the first should match the number of lines (4)
+    assert_equals 4 "$(echo $output | cut -d " " -f 1)" @MSG
+}
+```
+
+```output-g
+	Running test_calling_wc_without_any_arguments_should_also_count_the___of_lines ... SUCCESS
+```
+In case of a failure (`wc -c` counts the number of characters instead of lines),
+the resulting message is a merge of the individual `@XXX` decorators:
+
+```test-g
+@SCENARIO calling wc with the argument -c it should count the # of lines
+{
+  @GIVEN wc is installed
+  @WHEN running (echo BDD; echo is; echo so; echo cool) | wc -c
+    output=$((echo BDD; echo is; echo so; echo cool) | wc -c)
+  @THEN the counted number of lines should be 4
+    assert_equals 4 "$(echo $output)" @MSG
+}
+```
+
+```output-g
+	Running test_calling_wc_with_the_argument__c_it_should_count_the___of_lines ... FAILURE
+SCENARIO calling wc with the argument -c it should count the # of lines
+   GIVEN wc is installed
+    WHEN running (echo BDD; echo is; echo so; echo cool) | wc -c
+    THEN the counted number of lines should be 4
+ expected [4] but was [15]
+doc:4:test_calling_wc_with_the_argument__c_it_should_count_the___of_lines()
+```
+
+The Gherkin like test style is implemented by a simple DSL. The test script
+is preprocessed and lines with the `@XXX` decorators are getting replaced.
+The resulting script is then tested by *bash_unit* as usual.
+
+Key concepts you need to keep in mind when using the Gherin stype DSL:
+
+* The preprocessor parses the test script line by line and substitues the 
+lines starting with a `@XXX` decorator. Leading whitespaces are ignorred.
+* The `@MSG` decorator is handled in-line
+* The text following an `@XXX` decorator (with the exception of the `@MSG` decorator)
+is used as an argument to the decorator.
+* A decorator entry ends at the lineend. There is no line continuation.
+* Gherkin like tests can be mixed with the standard *bash_uni* style.
+* Only upper case decorators are handled.
+* Lines with an unknown `@XXX`decorator are filtered out.
+
+==== Recommended structure 
+The decorators helps to structure your test suites. Using the decorators
+give ou some guidelines to your hand how to document your tests. The 
+structured approach is much more readable then looking into some comments.
+When following a behavior driven develoment approach, the decorators can also
+be used to derive the documentation of the behavior.
+
+```text
+$ grep '^[[:blank:]]*@[[:upper:]]*' ../README.adoc 
+@FEATURE wc can count the number of lines
+@SCENARIO calling wc without any arguments should also count the # of lines
+  @GIVEN wc is installed
+  @WHEN running (echo BDD; echo is; echo so; echo cool) | wc
+  @THEN it should print three results
+  @AND the first should match the number of lines (4)
+...
+```
+
+Begin your tests with a `@FEATURE` decorator to express that the following
+set of test functions are used to verify the implemntation of a given feature.
+The argument is stored in an internal variable but not used anymore. 
+
+Beginning groups of tests with a `@FEATURE` helps to structure and to understand
+the test by others or after some time.
+
+The `@SCENARIO` decorator is mainly the wrapper to define a test function. The
+argument is any aspect to test given as clear text. It is used to generate name
+of the test function. Each character other than a letter or digit is replayed by
+an `_`. The resulting string is prefixed by `test_`.
+
+A line like
+```text
+@SCENARIO calling wc without any arguments should also count the # of lines
+```
+
+will be raplaced by
+```text
+test_calling_wc_without_any_arguments_should_also_count_the___of_lines ()
+```
+
+Use the `@GIVEN` decorator to describe a precondition to be met. The line
+will be filtered out and the argument will be used by the `@MSG` decorator.
+
+The `@WHEN` decorator should be used before running the code to be tested. 
+It should describe what is getting tested. The ine is filtered out and
+used by the `@MSG` decorator.
+
+Usually, after calling the code to test the test expression follows. You
+should add a `@THEN` decorator to express the expected behaviour of the 
+code to test. Again, the line is getting filtered out and the argument is
+used by the `@MSG` decorator.
+
+If you have multiple test expression for a given call of the code to test
+then you should use the `@AND` decorator. It is mainly the same as the `@THEN`
+decorator but extends the readability of the test.
