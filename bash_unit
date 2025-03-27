@@ -521,6 +521,7 @@ gherkin_strip_arg()
 
 gherkin_FEATURE() {
 	gherkin_last_feature=$(gherkin_strip_arg "$*")
+  echo ""
 }
 
 gherkin_SCENARIO() {
@@ -532,10 +533,12 @@ gherkin_SCENARIO() {
 
 gherkin_GIVEN() {
 	gherkin_last_given=$(gherkin_strip_arg "$*")
+  echo ""
 }
 
 gherkin_WHEN() {
 	gherkin_last_when=$(gherkin_strip_arg "$*")
+  echo ""
 }
 
 gherkin_THEN() {
@@ -552,6 +555,7 @@ gherkin_THEN() {
   gherkin_last_msg="${gherkin_last_msg}   ${COL}GIVEN${NCOL} $gherkin_last_given\n"
   gherkin_last_msg="${gherkin_last_msg}    ${COL}WHEN${NCOL} $gherkin_last_when\n"
   gherkin_last_msg="${gherkin_last_msg}    ${COL}THEN${NCOL} $gherkin_last_then"
+  echo ""
 }
 
 gherkin_AND() { gherkin_THEN "$@"; }
