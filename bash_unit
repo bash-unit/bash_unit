@@ -542,6 +542,7 @@ gherkin_WHEN() {
 }
 
 gherkin_THEN() {
+  local rc=$?
   local COL=""
   local NCOL=""
   if is_terminal; then
@@ -556,6 +557,7 @@ gherkin_THEN() {
   gherkin_last_msg="${gherkin_last_msg}    ${COL}WHEN${NCOL} $gherkin_last_when\n"
   gherkin_last_msg="${gherkin_last_msg}    ${COL}THEN${NCOL} $gherkin_last_then"
   echo ""
+  return $rc
 }
 
 gherkin_AND() { gherkin_THEN "$@"; }
