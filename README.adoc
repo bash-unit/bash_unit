@@ -103,9 +103,9 @@ ifndef::backend-manpage[]
 
 This will install *bash_unit* in your current working directory:
 
-    curl -s https://raw.githubusercontent.com/pgrange/bash_unit/master/install.sh | bash
+    curl -s https://raw.githubusercontent.com/bash-unit/bash_unit/master/install.sh | bash
 
-You can also download it from the https://github.com/pgrange/bash_unit/releases[release page].
+You can also download it from the https://github.com/bash-unit/bash_unit/releases[release page].
 
 endif::[]
 
@@ -128,7 +128,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Unit testing with bash_unit
       run: |
-        curl -s https://raw.githubusercontent.com/pgrange/bash_unit/master/install.sh | bash
+        curl -s https://raw.githubusercontent.com/bash-unit/bash_unit/master/install.sh | bash
         FORCE_COLOR=true ./bash_unit tests/test_*
 ```
 
@@ -144,7 +144,7 @@ test:
   script:
     - apt-get update
     - apt-get install --no-install-recommends -y curl ca-certificates
-    - curl -s https://raw.githubusercontent.com/pgrange/bash_unit/master/install.sh | bash
+    - curl -s https://raw.githubusercontent.com/bash-unit/bash_unit/master/install.sh | bash
     - FORCE_COLOR=true ./bash_unit tests/test_*
 ```
 
@@ -159,7 +159,7 @@ Add the following to your pre-commit configuration. By default it will run scrip
 [.pre-commit-config,yaml]
 ```
 repos:
-  - repo: https://github.com/pgrange/bash_unit
+  - repo: https://github.com/bash-unit/bash_unit
     rev: v2.2.0
     hooks:
       - id: bash-unit
@@ -336,7 +336,7 @@ If you write code outside of any bash function, this code will be executed once 
 your file is a bash script and *bash_unit* sources it before running your tests. It is suggested to write a
 *setup_suite* function and avoid any code outside a bash function. you must not use any bash_unit assertion
 in setup_suite or use exit in setup_suite for teardown_suite to be run.
-See https://github.com/pgrange/bash_unit/issues/43[issue 43] for more details.
+See https://github.com/bash-unit/bash_unit/issues/43[issue 43] for more details.
 
 If you want to keep an eye on a test not yet implemented, prefix the name of the function by *todo* instead of test.
 Test to do are not executed and do not impact the global status of your test suite but are displayed in *bash_unit* output.

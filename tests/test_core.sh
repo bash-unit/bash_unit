@@ -218,7 +218,7 @@ EOF
 }
 
 test_should_pretty_format_even_when_LANG_is_unset() {
-  # See https://github.com/pgrange/bash_unit/pull/81
+  # See https://github.com/bash-unit/bash_unit/pull/81
   unset LANG
   assert "echo foo | pretty_format GREEN I"
 }

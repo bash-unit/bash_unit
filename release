@@ -63,7 +63,7 @@ publish_release() {
 
   git push
   git push --tags
-  curl  -u "$user:$token" -XPOST https://api.github.com/repos/pgrange/bash_unit/releases -d "
+  curl  -u "$user:$token" -XPOST https://api.github.com/repos/bash-unit/bash_unit/releases -d "
 {
   \"tag_name\": \"$version\"
   }"

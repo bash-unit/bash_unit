@@ -12,7 +12,7 @@ Share your success with bash_unit on your blog, twitter, stackoverflow...
 Nice words to share your experience with bash_unit is always appreciated.
 If you want to say something nice about bash_unit but can not think of a 
 place for that right now, just add a comment to
-[issue #37](https://github.com/pgrange/bash_unit/issues/37).
+[issue #37](https://github.com/bash-unit/bash_unit/issues/37).
 
 Starring the project is also appreciated.
 
@@ -20,7 +20,7 @@ Starring the project is also appreciated.
 
 When you see something that is not working with bash_unit, or if you feel
 something is missing, open an
-[issue](https://github.com/pgrange/bash_unit/issues).
+[issue](https://github.com/bash-unit/bash_unit/issues).
 
 Opening issues helps improving bash_unit.
 
@@ -32,7 +32,7 @@ and create a pull-request.
 
 You can contribute with new features you think are missing but you can
 also find inspiration with the
-[open issues](https://github.com/pgrange/bash_unit/issues) of bash_unit.
+[open issues](https://github.com/bash-unit/bash_unit/issues) of bash_unit.
 
 See [how to contribute code](CONTRIBUTING_CODE.md).
 

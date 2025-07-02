@@ -144,12 +144,12 @@ test_display_usage_when_test_file_does_not_exist() {
 }
 
 test_bash_unit_succeed_when_no_failure_even_if_no_teardown() {
-  #FIX https://github.com/pgrange/bash_unit/issues/8
+  #FIX https://github.com/bash-unit/bash_unit/issues/8
   assert "$BASH_UNIT <(echo 'test_success() { echo -n ; }')"
 }
 
 test_bash_unit_runs_teardown_even_in_case_of_failure() {
-  #FIX https://github.com/pgrange/bash_unit/issues/10
+  #FIX https://github.com/bash-unit/bash_unit/issues/10
   assert_equals "ran teardown" \
     "$($BASH_UNIT <(echo 'test_fail() { fail ; } ; teardown() { echo "ran teardown" >&2 ; }') 2>&1 >/dev/null)"
 }
@@ -160,19 +160,19 @@ test_bash_unit_runs_teardown_suite_even_in_case_of_failure() {
 }
 
 test_bash_unit_runs_teardown_suite_even_in_case_of_failure_setup_suite() {
-  #FIX https://github.com/pgrange/bash_unit/issues/43
+  #FIX https://github.com/bash-unit/bash_unit/issues/43
   assert_equals "ran teardown_suite" \
     "$($BASH_UNIT <(echo 'setup_suite() { return 1 ; } ; teardown_suite() { echo "ran teardown_suite" >&2 ; }') 2>&1 >/dev/null)"
 }
 
 test_one_test_should_stop_after_first_assertion_failure() {
-  #FIX https://github.com/pgrange/bash_unit/issues/10
+  #FIX https://github.com/bash-unit/bash_unit/issues/10
   assert_equals "before failure" \
     "$($BASH_UNIT <(echo 'test_fail() { echo "before failure" >&2 ; fail ; echo "after failure" >&2 ; }') 2>&1 >/dev/null)"
 }
 
 test_one_test_should_stop_when_assert_fails() {
-  #FIX https://github.com/pgrange/bash_unit/issues/26
+  #FIX https://github.com/bash-unit/bash_unit/issues/26
   assert_equals "before failure" \
     "$($BASH_UNIT <(echo 'test_fail() { echo "before failure" >&2 ; assert false ; echo "after failure" >&2 ; }') 2>&1 >/dev/null)"
 }

@@ -14,7 +14,7 @@
 #   along with this program; if not, write to the Free Software Foundation,
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 #
-#  https://github.com/pgrange/bash_unit
+#  https://github.com/bash-unit/bash_unit
 
 # shellcheck disable=2317  # Ignore unreachable - most function are not called.
 # shellcheck disable=2155  # Ignore Declare and assign separately
@@ -305,7 +305,7 @@ usage() {
   echo "<output format> is optional only supported value is tap" >&2
   echo "-r to execute test cases in random order" >&2
   echo "-v to get current version information" >&2
-  echo "See https://github.com/pgrange/bash_unit" >&2
+  echo "See https://github.com/bash-unit/bash_unit" >&2
   exit 1
 }
 
