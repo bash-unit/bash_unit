@@ -208,7 +208,12 @@ stacktrace() {
   local i=1
   while [ -n "${BASH_SOURCE[$i]:-}" ]
   do
-    echo "${BASH_SOURCE[$i]}:${BASH_LINENO[$((i-1))]}:${FUNCNAME[$i]}()"
+    if [ "$gherkin" = 1 ] && [[ ${BASH_SOURCE[$i]} =~ ^/dev/fd ]]
+    then
+      echo "$test_file:${BASH_LINENO[$((i-1))]}:${FUNCNAME[$i]}()"
+    else
+      echo "${BASH_SOURCE[$i]}:${BASH_LINENO[$((i-1))]}:${FUNCNAME[$i]}()"
+    fi
     i=$((i + 1))
   done | "$GREP" -v "^$BASH_SOURCE"
 }
@@ -504,6 +509,67 @@ count() {
   fi
 }
 
+#---------------------
+gherkin_strip_arg()
+{
+	local s
+	s=${1## }
+	s=${s#\"}
+	s=${s%\"}
+	echo "$s"
+}
+
+gherkin_FEATURE() {
+	gherkin_last_feature=$(gherkin_strip_arg "$*")
+  echo ""
+}
+
+gherkin_SCENARIO() {
+  local func_name
+	gherkin_last_scenario=$(gherkin_strip_arg "$*")
+	func_name="${gherkin_last_scenario//[^a-zA-Z0-9_]/_}"
+	echo "test_$func_name ()"
+}
+
+gherkin_GIVEN() {
+	gherkin_last_given=$(gherkin_strip_arg "$*")
+  echo ""
+}
+
+gherkin_WHEN() {
+	gherkin_last_when=$(gherkin_strip_arg "$*")
+  echo ""
+}
+
+gherkin_THEN() {
+  local COL=""
+  local NCOL=""
+  if is_terminal; then
+    COL="${YELLOW}"
+    NCOL="${NOCOLOR}"
+  fi
+
+	gherkin_last_then=$(gherkin_strip_arg "$*")
+	gherkin_last_msg=""
+  gherkin_last_msg="${gherkin_last_msg}${COL}SCENARIO${NCOL} $gherkin_last_scenario\n"
+  gherkin_last_msg="${gherkin_last_msg}   ${COL}GIVEN${NCOL} $gherkin_last_given\n"
+  gherkin_last_msg="${gherkin_last_msg}    ${COL}WHEN${NCOL} $gherkin_last_when\n"
+  gherkin_last_msg="${gherkin_last_msg}    ${COL}THEN${NCOL} $gherkin_last_then"
+  echo ""
+}
+
+gherkin_AND() { gherkin_THEN "$@"; }
+
+gherkin_parse()
+{
+	while IFS= read -r line; do
+	#	echo "$line"
+		[[ $line =~ [:blank:]*@([A-Z]*)\ (.*) ]] && { "gherkin_${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"; continue; }
+		line="${line/@MSG/\"$gherkin_last_msg\"}"
+		echo "$line"
+	done < <(cat "$1")
+}
+#----------------------
 output_format=text
 verbosity=normal
 test_pattern=""
@@ -511,7 +577,8 @@ test_pattern_separator=""
 skip_pattern=""
 skip_pattern_separator=""
 randomize=0
-while getopts "vp:s:f:rq" option
+gherkin=0
+while getopts "vp:s:f:rqg" option
 do
   case "$option" in
     p)
@@ -534,6 +601,9 @@ do
       ;;
     q)
       verbosity=quiet
+      ;;
+    g)
+      gherkin=1
       ;;
     ?)
       usage
@@ -579,11 +649,23 @@ do
     if [[ "${STICK_TO_CWD:-}" != true ]]
     then
       cd "$(dirname "$test_file")"
-      # shellcheck disable=1090
-      source "$(basename "$test_file")"
+      if [ "$gherkin" = 1 ]
+      then
+        # shellcheck disable=1090
+        source <(gherkin_parse "$(basename "$test_file")")
+      else
+        # shellcheck disable=1090
+        source "$(basename "$test_file")"
+      fi
     else
-      # shellcheck disable=1090
-      source "$test_file"
+      if [ "$gherkin" = 1 ]
+      then
+        # shellcheck disable=1090
+        source <(gherkin_parse "$test_file")
+      else
+        # shellcheck disable=1090
+        source "$test_file"
+      fi
     fi
     set +e
     run_test_suite

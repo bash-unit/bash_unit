@@ -8,9 +8,13 @@ unset LC_ALL LANGUAGE
 export STICK_TO_CWD=true
 BASH_UNIT="eval FORCE_COLOR=false ./bash_unit"
 
+TEST_PATTERN_GHERKIN='```test-g'
+OUTPUT_PATTERN_GHERKIN='```output-g'
+BASH_UNIT_GHERKIN="eval FORCE_COLOR=false ./bash_unit -g"
+block=0
+
 prepare_tests() {
-  mkdir /tmp/$$
-  local block=0
+  [ -d /tmp/$$ ] || mkdir /tmp/$$
   local remaining=/tmp/$$/remaining
   local swap=/tmp/$$/swap
   local test_output=/tmp/$$/test_output
@@ -26,6 +30,14 @@ prepare_tests() {
         assert "diff -u '"$expected_output$block"' '"$test_output$block"'"
       }'
   done
+}
+
+prepare_gherkin_tests()
+{
+	BASH_UNIT="$BASH_UNIT_GHERKIN"
+	TEST_PATTERN="$TEST_PATTERN_GHERKIN"
+	OUTPUT_PATTERN="$OUTPUT_PATTERN_GHERKIN"
+	prepare_tests
 }
 
 function run_doc_test() {
@@ -81,3 +93,4 @@ function _next_quote_section() {
 # test subdirectory
 cd ..
 prepare_tests
+prepare_gherkin_tests
