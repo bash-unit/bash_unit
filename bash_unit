@@ -17,6 +17,7 @@
 #  https://github.com/bash-unit/bash_unit
 
 # shellcheck disable=2317  # Ignore unreachable - most function are not called.
+# shellcheck disable=2329  # Ignore unreachable - most function are not called.
 # shellcheck disable=2155  # Ignore Declare and assign separately
 # spellchecker: ignore NOCOLOR SHUF
 
@@ -420,8 +421,7 @@ text_format() {
   }
   notify_message() {
     local message="$1"
-    # shellcheck disable=SC2059
-    [[ -z "$message" ]] || printf -- "$message\n"
+    [[ -z "$message" ]] || printf -- "%s\n" "$message"
   }
 
   notify_stdout() {
@@ -475,7 +475,7 @@ tap_format() {
   }
   notify_message() {
     local message="$1"
-    [[ -z "$message" ]] || printf -- "%b\n" "$message" | "$SED" -u -e 's/^/# /'
+    [[ -z "$message" ]] || printf -- "%s\n" "$message" | "$SED" -u -e 's/^/# /'
   }
   notify_stdout() {
     "$SED" 's:^:# out> :' | color "$GREEN"

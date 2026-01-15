@@ -209,6 +209,30 @@ test_failure_status_printed_after_test_name() {
     "$($BASH_UNIT <(echo 'test_fail_should_print_failure() { false; }'))"
 }
 
+test_notify_message_handles_percent_signs_as_literal_text() {
+  # Test that printf in notify_message doesn't interpret % as placeholder
+  bash_unit_output=$($BASH_UNIT <(echo 'test_percent() { fail "Expected 100% but got 50%" ; }') 2>&1 | "$GREP" "Expected 100% but got 50%")
+  assert_equals "Expected 100% but got 50%" "$bash_unit_output"
+}
+
+test_notify_message_handles_percent_signs_as_literal_text_tap_format() {
+  # Test that printf in notify_message doesn't interpret % as placeholder
+  bash_unit_output=$($BASH_UNIT -f tap <(echo 'test_percent() { fail "Expected 100% but got 50%" ; }') 2>&1 | "$GREP" "Expected 100% but got 50%")
+  assert_equals "# Expected 100% but got 50%" "$bash_unit_output"
+}
+
+test_notify_message_handles_unicode_escape_sequences_as_literal_text() {
+  # Test that printf in notify_message doesn't interpret escape sequences
+  bash_unit_output=$($BASH_UNIT <(printf '%s\n' 'test_escape() { fail "Symbol: \u2713\nshould be literal" ; }') 2>&1 | "$GREP" 'Symbol:')
+  assert_matches '\\u2713\\nshould' "$bash_unit_output"
+}
+
+test_notify_message_handles_unicode_escape_sequences_as_literal_text_tap_format() {
+  # Test that printf in notify_message doesn't interpret escape sequences
+  bash_unit_output=$($BASH_UNIT -f tap <(printf '%s\n' 'test_escape() { fail "Symbol: \u2713\nshould be literal" ; }') 2>&1 | "$GREP" 'Symbol:')
+  assert_matches '\\u2713\\nshould' "$bash_unit_output"
+}
+
 setup() {
   # fake basic unix commands bash_unit relies on so that
   # we ensure bash_unit keeps working when people fake
