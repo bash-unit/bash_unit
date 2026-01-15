@@ -225,6 +225,15 @@ test_should_pretty_format_even_when_LANG_is_unset() {
   assert "echo foo | pretty_format GREEN I"
 }
 
+test_should_pretty_format_even_with_pipefail_set() {
+  # pretty_success must not fail when alt_symbol is empty with pipefail set.
+  (
+    set -o pipefail
+    unset LANG
+    assert "echo foo | pretty_success"
+  )
+}
+
 if [[ "${STICK_TO_CWD:-}" != true ]]
 then
   # do not test for cwd if STICK_TO_CWD is true

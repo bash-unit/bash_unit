@@ -357,8 +357,8 @@ pretty_format() {
     if $term_utf8
     then
       echo -en " $pretty_symbol "
-    else
-      [[ -n "$alt_symbol" ]] && echo -en " $alt_symbol "
+    elif [[ -n "$alt_symbol" ]]; then
+      echo -en " $alt_symbol "
     fi
   ) | color "$color"
 }
