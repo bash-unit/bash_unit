@@ -221,16 +221,16 @@ test_notify_message_handles_percent_signs_as_literal_text_tap_format() {
   assert_equals "# Expected 100% but got 50%" "$bash_unit_output"
 }
 
-test_notify_message_handles_unicode_escape_sequences_as_literal_text() {
-  # Test that printf in notify_message doesn't interpret escape sequences
-  bash_unit_output=$($BASH_UNIT <(printf '%s\n' 'test_escape() { fail "Symbol: \u2713\nshould be literal" ; }') 2>&1 | "$GREP" 'Symbol:')
-  assert_matches '\\u2713\\nshould' "$bash_unit_output"
+test_notify_message_renders_unicode_characters_correctly() {
+  # Test that notify_message properly interprets Unicode escape sequences and newlines
+  bash_unit_output=$($BASH_UNIT <(printf '%s\n' 'test_escape() { fail "Symbol: \u2713\nMultiline message" ; }') 2>&1 || : )
+  assert_matches "Symbol: ✓"$'\n'"Multiline message" "$bash_unit_output"
 }
 
-test_notify_message_handles_unicode_escape_sequences_as_literal_text_tap_format() {
-  # Test that printf in notify_message doesn't interpret escape sequences
-  bash_unit_output=$($BASH_UNIT -f tap <(printf '%s\n' 'test_escape() { fail "Symbol: \u2713\nshould be literal" ; }') 2>&1 | "$GREP" 'Symbol:')
-  assert_matches '\\u2713\\nshould' "$bash_unit_output"
+test_notify_message_renders_unicode_characters_correctly_tap_format() {
+  # Test that notify_message properly interprets Unicode escape sequences and newlines in TAP format
+  bash_unit_output=$($BASH_UNIT -f tap <(printf '%s\n' 'test_escape() { fail "Symbol: \u2713\nMultiline message" ; }') 2>&1 || : )
+  assert_matches "# Symbol: ✓"$'\n'"# Multiline message" "$bash_unit_output"
 }
 
 setup() {
