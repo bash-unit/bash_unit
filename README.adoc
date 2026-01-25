@@ -667,7 +667,7 @@ If _condition_ is true, will skip all the tests in the current file which match 
 
 This can be useful when one has tests that are dependent on system environment, for instance:
 
-```test
+```
 skip_if "uname | grep Darwin" linux
 skip_if "uname | grep Linux" darwin
 
@@ -681,7 +681,7 @@ test_darwin_proc_does_not_exist() {
 
 will output, on a Linux system:
 
-```output
+```
 	Running test_darwin_proc_does_not_exist ... SKIPPED
 	Running test_linux_proc_exists ... SUCCESS
 ```
