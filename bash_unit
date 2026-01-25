@@ -17,6 +17,7 @@
 #  https://github.com/bash-unit/bash_unit
 
 # shellcheck disable=2317  # Ignore unreachable - most function are not called.
+# shellcheck disable=2329  # Ignore unreachable - most function are not called.
 # shellcheck disable=2155  # Ignore Declare and assign separately
 # spellchecker: ignore NOCOLOR SHUF
 
@@ -191,6 +192,101 @@ assert_no_diff() {
 
   assert "diff '${expected}' '${actual}'"  \
     "$message expected '${actual}' to be identical to '${expected}' but was different"
+}
+
+#
+# Run command wrapper with output assertions
+#
+
+BASH_UNIT_RUN_STATUS=""
+BASH_UNIT_RUN_OUTPUT=""
+BASH_UNIT_RUN_ERROR=""
+
+run() {
+  BASH_UNIT_RUN_STATUS=""
+  BASH_UNIT_RUN_OUTPUT=""
+  BASH_UNIT_RUN_ERROR=""
+
+  local stdout=$(mktemp)
+  local stderr=$(mktemp)
+  # shellcheck disable=2064
+  trap "$RM -f \"$stdout\" \"$stderr\"" EXIT
+
+  BASH_UNIT_RUN_STATUS=0
+  "$@" >"$stdout" 2>"$stderr" || BASH_UNIT_RUN_STATUS=$?
+  BASH_UNIT_RUN_OUTPUT=$("$CAT" "$stdout")
+  BASH_UNIT_RUN_ERROR=$("$CAT" "$stderr")
+
+  "$RM" -f "$stdout" "$stderr"
+  trap - EXIT
+}
+
+assert_run_success() {
+  local message=${1:-}
+  [[ -z $message ]] || message="$message\n"
+
+  if [ "$BASH_UNIT_RUN_STATUS" != 0 ]; then
+    fail "${message}expected run command to succeed but status was $BASH_UNIT_RUN_STATUS"
+  fi
+}
+
+assert_run_fails() {
+  local message=${1:-}
+  [[ -z $message ]] || message="$message\n"
+
+  if [ "$BASH_UNIT_RUN_STATUS" == 0 ]; then
+    fail "${message}expected run command to fail but status was 0"
+  fi
+}
+
+assert_run_status_code() {
+  local expected=$1
+  local message=${2:-}
+  [[ -z $message ]] || message="$message\n"
+
+  if [ "$BASH_UNIT_RUN_STATUS" != "$expected" ]; then
+    fail "${message}expected run command to have status code $expected but was $BASH_UNIT_RUN_STATUS"
+  fi
+}
+
+assert_run_output_equals() {
+  local expected=$1
+  local message=${2:-}
+  [[ -z $message ]] || message="$message\n"
+
+  if [ "$expected" != "$BASH_UNIT_RUN_OUTPUT" ]; then
+    fail "${message}expected run output [$expected] but was [$BASH_UNIT_RUN_OUTPUT]"
+  fi
+}
+
+assert_run_output_matches() {
+  local pattern=$1
+  local message=${2:-}
+  [[ -z $message ]] || message="$message\n"
+
+  if [[ ! "$BASH_UNIT_RUN_OUTPUT" =~ $pattern ]]; then
+    fail "${message}expected run output to match regex [$pattern] but was [$BASH_UNIT_RUN_OUTPUT]"
+  fi
+}
+
+assert_run_error_equals() {
+  local expected=$1
+  local message=${2:-}
+  [[ -z $message ]] || message="$message\n"
+
+  if [ "$expected" != "$BASH_UNIT_RUN_ERROR" ]; then
+    fail "${message}expected run error [$expected] but was [$BASH_UNIT_RUN_ERROR]"
+  fi
+}
+
+assert_run_error_matches() {
+  local pattern=$1
+  local message=${2:-}
+  [[ -z $message ]] || message="$message\n"
+
+  if [[ ! "$BASH_UNIT_RUN_ERROR" =~ $pattern ]]; then
+    fail "${message}expected run error to match regex [$pattern] but was [$BASH_UNIT_RUN_ERROR]"
+  fi
 }
 
 fake() {

@@ -36,6 +36,14 @@ The following functions are available in your tests (see below for detailed docu
 * `assert_not_matches <unexpected-regex> <actual> [message]`
 * `assert_within_delta <expected num> <actual num> <max delta> [message]`
 * `assert_no_diff <expected> <actual> [message]`
+* `run <command> [args...]`
+* `assert_run_success [message]`
+* `assert_run_fails [message]`
+* `assert_run_status_code <expected_status_code> [message]`
+* `assert_run_output_equals <expected> [message]`
+* `assert_run_output_matches <expected-regex> [message]`
+* `assert_run_error_equals <expected> [message]`
+* `assert_run_error_matches <expected-regex> [message]`
 * `skip_if <condition> <pattern>`
 * `fake <command> [replacement code]`
 
@@ -189,6 +197,22 @@ Running tests in tests/test_core.sh
 	Running test_assert_not_equals_succeeds_when_not_equal ... SUCCESS
 	Running test_assert_not_matches_fails_when_matching ... SUCCESS
 	Running test_assert_not_matches_succeed_when_not_matching ... SUCCESS
+	Running test_assert_run_error_equals_fails_when_mismatch ... SUCCESS
+	Running test_assert_run_error_equals_succeeds ... SUCCESS
+	Running test_assert_run_error_matches_fails_when_no_match ... SUCCESS
+	Running test_assert_run_error_matches_succeeds ... SUCCESS
+	Running test_assert_run_fails_fails_when_zero ... SUCCESS
+	Running test_assert_run_fails_succeeds ... SUCCESS
+	Running test_assert_run_output_equals_fails_when_mismatch ... SUCCESS
+	Running test_assert_run_output_equals_handles_multiline ... SUCCESS
+	Running test_assert_run_output_equals_succeeds ... SUCCESS
+	Running test_assert_run_output_matches_fails_when_no_match ... SUCCESS
+	Running test_assert_run_output_matches_succeeds ... SUCCESS
+	Running test_assert_run_status_code_fails_when_mismatch ... SUCCESS
+	Running test_assert_run_status_code_succeeds ... SUCCESS
+	Running test_assert_run_success_fails_when_nonzero ... SUCCESS
+	Running test_assert_run_success_shows_custom_message ... SUCCESS
+	Running test_assert_run_success_succeeds ... SUCCESS
 	Running test_assert_shows_stderr_on_failure ... SUCCESS
 	Running test_assert_shows_stdout_on_failure ... SUCCESS
 	Running test_assert_status_code_fails ... SUCCESS
@@ -205,6 +229,10 @@ Running tests in tests/test_core.sh
 	Running test_fake_exports_faked_in_subshells ... SUCCESS
 	Running test_fake_transmits_params_to_fake_code ... SUCCESS
 	Running test_fake_transmits_params_to_fake_code_as_array ... SUCCESS
+	Running test_run_clears_previous_state ... SUCCESS
+	Running test_run_combined_assertions ... SUCCESS
+	Running test_run_handles_command_with_arguments ... SUCCESS
+	Running test_run_handles_commands_with_pipes ... SUCCESS
 	Running test_should_pretty_format_even_when_LANG_is_unset ... SUCCESS
 	Running test_should_pretty_format_even_with_pipefail_set ... SUCCESS
 Overall result: SUCCESS
@@ -233,6 +261,22 @@ Running tests in tests/test_core.sh
 	Running test_assert_not_equals_succeeds_when_not_equal ... SUCCESS
 	Running test_assert_not_matches_fails_when_matching ... SUCCESS
 	Running test_assert_not_matches_succeed_when_not_matching ... SUCCESS
+	Running test_assert_run_error_equals_fails_when_mismatch ... SUCCESS
+	Running test_assert_run_error_equals_succeeds ... SUCCESS
+	Running test_assert_run_error_matches_fails_when_no_match ... SUCCESS
+	Running test_assert_run_error_matches_succeeds ... SUCCESS
+	Running test_assert_run_fails_fails_when_zero ... SUCCESS
+	Running test_assert_run_fails_succeeds ... SUCCESS
+	Running test_assert_run_output_equals_fails_when_mismatch ... SUCCESS
+	Running test_assert_run_output_equals_handles_multiline ... SUCCESS
+	Running test_assert_run_output_equals_succeeds ... SUCCESS
+	Running test_assert_run_output_matches_fails_when_no_match ... SUCCESS
+	Running test_assert_run_output_matches_succeeds ... SUCCESS
+	Running test_assert_run_status_code_fails_when_mismatch ... SUCCESS
+	Running test_assert_run_status_code_succeeds ... SUCCESS
+	Running test_assert_run_success_fails_when_nonzero ... SUCCESS
+	Running test_assert_run_success_shows_custom_message ... SUCCESS
+	Running test_assert_run_success_succeeds ... SUCCESS
 	Running test_assert_shows_stderr_on_failure ... SUCCESS
 	Running test_assert_shows_stdout_on_failure ... SUCCESS
 	Running test_assert_status_code_fails ... SUCCESS
@@ -241,6 +285,7 @@ Running tests in tests/test_core.sh
 	Running test_assert_within_delta_fails ... SUCCESS
 	Running test_assert_within_delta_succeeds ... SUCCESS
 	Running test_fail_fails ... SUCCESS
+	Running test_run_combined_assertions ... SUCCESS
 Overall result: SUCCESS
 ```
 
@@ -261,6 +306,11 @@ Running tests in tests/test_core.sh
 	Running test_assert_not_equals_succeeds_when_not_equal ... SKIPPED
 	Running test_assert_not_matches_fails_when_matching ... SKIPPED
 	Running test_assert_not_matches_succeed_when_not_matching ... SKIPPED
+	Running test_assert_run_error_matches_fails_when_no_match ... SKIPPED
+	Running test_assert_run_output_matches_fails_when_no_match ... SKIPPED
+	Running test_assert_run_status_code_fails_when_mismatch ... SKIPPED
+	Running test_assert_run_status_code_succeeds ... SKIPPED
+	Running test_assert_run_success_fails_when_nonzero ... SKIPPED
 	Running test_assert_status_code_fails ... SKIPPED
 	Running test_assert_status_code_succeeds ... SKIPPED
 	Running test_assert_equals_succeed_when_equal ... SUCCESS
@@ -268,9 +318,26 @@ Running tests in tests/test_core.sh
 	Running test_assert_fails_fails ... SUCCESS
 	Running test_assert_fails_succeeds ... SUCCESS
 	Running test_assert_matches_succeed_when_matching ... SUCCESS
+	Running test_assert_run_error_equals_fails_when_mismatch ... SUCCESS
+	Running test_assert_run_error_equals_succeeds ... SUCCESS
+	Running test_assert_run_error_matches_succeeds ... SUCCESS
+	Running test_assert_run_fails_fails_when_zero ... SUCCESS
+	Running test_assert_run_fails_succeeds ... SUCCESS
+	Running test_assert_run_output_equals_fails_when_mismatch ... SUCCESS
+	Running test_assert_run_output_equals_handles_multiline ... SUCCESS
+	Running test_assert_run_output_equals_succeeds ... SUCCESS
+	Running test_assert_run_output_matches_succeeds ... SUCCESS
+	Running test_assert_run_success_shows_custom_message ... SUCCESS
+	Running test_assert_run_success_succeeds ... SUCCESS
 	Running test_assert_shows_stderr_on_failure ... SUCCESS
 	Running test_assert_shows_stdout_on_failure ... SUCCESS
 	Running test_assert_succeeds ... SUCCESS
+	Running test_assert_within_delta_fails ... SUCCESS
+	Running test_assert_within_delta_succeeds ... SUCCESS
+	Running test_fail_fails ... SUCCESS
+	Running test_run_combined_assertions ... SUCCESS
+Overall result: SUCCESS
+```
 	Running test_assert_within_delta_fails ... SUCCESS
 	Running test_assert_within_delta_succeeds ... SUCCESS
 	Running test_fail_fails ... SUCCESS
@@ -299,6 +366,22 @@ ok - test_assert_not_equals_fails_when_equal
 ok - test_assert_not_equals_succeeds_when_not_equal
 ok - test_assert_not_matches_fails_when_matching
 ok - test_assert_not_matches_succeed_when_not_matching
+ok - test_assert_run_error_equals_fails_when_mismatch
+ok - test_assert_run_error_equals_succeeds
+ok - test_assert_run_error_matches_fails_when_no_match
+ok - test_assert_run_error_matches_succeeds
+ok - test_assert_run_fails_fails_when_zero
+ok - test_assert_run_fails_succeeds
+ok - test_assert_run_output_equals_fails_when_mismatch
+ok - test_assert_run_output_equals_handles_multiline
+ok - test_assert_run_output_equals_succeeds
+ok - test_assert_run_output_matches_fails_when_no_match
+ok - test_assert_run_output_matches_succeeds
+ok - test_assert_run_status_code_fails_when_mismatch
+ok - test_assert_run_status_code_succeeds
+ok - test_assert_run_success_fails_when_nonzero
+ok - test_assert_run_success_shows_custom_message
+ok - test_assert_run_success_succeeds
 ok - test_assert_shows_stderr_on_failure
 ok - test_assert_shows_stdout_on_failure
 ok - test_assert_status_code_fails
@@ -315,9 +398,13 @@ ok - test_fake_echo_stdin_when_no_params
 ok - test_fake_exports_faked_in_subshells
 ok - test_fake_transmits_params_to_fake_code
 ok - test_fake_transmits_params_to_fake_code_as_array
+ok - test_run_clears_previous_state
+ok - test_run_combined_assertions
+ok - test_run_handles_command_with_arguments
+ok - test_run_handles_commands_with_pipes
 ok - test_should_pretty_format_even_when_LANG_is_unset
 ok - test_should_pretty_format_even_with_pipefail_set
-1..31
+1..51
 ```
 
 == How to write tests
@@ -657,6 +744,213 @@ out> < foo
 out> ---
 out> > bar
 doc:2:test_obvious_notmatching_with_assert_no_diff()
+```
+
+=== *run*
+
+    run <command> [args...]
+
+Executes _command_ with the given arguments and captures:
+
+* Exit status in `$BASH_UNIT_RUN_STATUS`
+* Standard output in `$BASH_UNIT_RUN_OUTPUT`
+* Standard error in `$BASH_UNIT_RUN_ERROR`
+
+Each call to `run` clears the previous values, so these variables always contain the results of the most recent command.
+
+Use this function in combination with the `assert_run_*` functions to test command behavior.
+
+=== *assert_run_success*
+
+    assert_run_success [message]
+
+Asserts that the last command executed with `run` succeeded (exit status 0).
+
+```test
+test_command_succeeds(){
+  run echo "hello"
+  assert_run_success
+}
+
+test_command_fails_when_expected_success(){
+  run false
+  assert_run_success
+}
+```
+
+```output
+	Running test_command_fails_when_expected_success ... FAILURE
+expected run command to succeed but status was 1
+doc:8:test_command_fails_when_expected_success()
+	Running test_command_succeeds ... SUCCESS
+```
+
+=== *assert_run_fails*
+
+    assert_run_fails [message]
+
+Asserts that the last command executed with `run` failed (exit status not 0).
+
+```test
+test_command_fails(){
+  run false
+  assert_run_fails
+}
+
+test_command_succeeds_when_expected_failure(){
+  run true
+  assert_run_fails
+}
+```
+
+```output
+	Running test_command_fails ... SUCCESS
+	Running test_command_succeeds_when_expected_failure ... FAILURE
+expected run command to fail but status was 0
+doc:8:test_command_succeeds_when_expected_failure()
+```
+
+=== *assert_run_status_code*
+
+    assert_run_status_code <expected_status_code> [message]
+
+Asserts that the last command executed with `run` exited with a specific status code.
+
+```test
+test_specific_exit_code(){
+  run sh -c 'exit 42'
+  assert_run_status_code 42
+}
+
+test_wrong_exit_code(){
+  run sh -c 'exit 1'
+  assert_run_status_code 0
+}
+```
+
+```output
+	Running test_specific_exit_code ... SUCCESS
+	Running test_wrong_exit_code ... FAILURE
+expected run command to have status code 0 but was 1
+doc:8:test_wrong_exit_code()
+```
+
+=== *assert_run_output_equals*
+
+    assert_run_output_equals <expected> [message]
+
+Asserts that the standard output from the last `run` command exactly matches _expected_.
+
+```test
+test_output_matches(){
+  run echo "hello world"
+  assert_run_output_equals "hello world"
+}
+
+test_output_differs(){
+  run echo "actual"
+  assert_run_output_equals "expected"
+}
+```
+
+```output
+	Running test_output_differs ... FAILURE
+expected run output [expected] but was [actual]
+doc:8:test_output_differs()
+	Running test_output_matches ... SUCCESS
+```
+
+=== *assert_run_output_matches*
+
+    assert_run_output_matches <expected-regex> [message]
+
+Asserts that the standard output from the last `run` command matches the given regex pattern.
+
+```test
+test_output_matches_pattern(){
+  run echo "Error: file not found"
+  assert_run_output_matches "Error:.*not found"
+}
+
+test_output_does_not_match(){
+  run echo "Success"
+  assert_run_output_matches "Error:"
+}
+```
+
+```output
+	Running test_output_does_not_match ... FAILURE
+expected run output to match regex [Error:] but was [Success]
+doc:8:test_output_does_not_match()
+	Running test_output_matches_pattern ... SUCCESS
+```
+
+=== *assert_run_error_equals*
+
+    assert_run_error_equals <expected> [message]
+
+Asserts that the standard error from the last `run` command exactly matches _expected_.
+
+```test
+test_error_matches(){
+  run sh -c 'echo "error message" >&2'
+  assert_run_error_equals "error message"
+}
+
+test_error_differs(){
+  run sh -c 'echo "actual error" >&2'
+  assert_run_error_equals "expected error"
+}
+```
+
+```output
+	Running test_error_differs ... FAILURE
+expected run error [expected error] but was [actual error]
+doc:8:test_error_differs()
+	Running test_error_matches ... SUCCESS
+```
+
+=== *assert_run_error_matches*
+
+    assert_run_error_matches <expected-regex> [message]
+
+Asserts that the standard error from the last `run` command matches the given regex pattern.
+
+```test
+test_error_matches_pattern(){
+  run sh -c 'echo "Warning: disk space low" >&2'
+  assert_run_error_matches "Warning:.*low"
+}
+
+test_error_does_not_match(){
+  run sh -c 'echo "Info: all good" >&2'
+  assert_run_error_matches "Warning:"
+}
+```
+
+```output
+	Running test_error_does_not_match ... FAILURE
+expected run error to match regex [Warning:] but was [Info: all good]
+doc:8:test_error_does_not_match()
+	Running test_error_matches_pattern ... SUCCESS
+```
+
+=== Combined usage example
+
+You can combine multiple assertions to thoroughly test a command's behavior:
+
+```test
+test_complete_command_verification(){
+  run sh -c 'echo "output"; echo "error" >&2; exit 0'
+
+  assert_run_success
+  assert_run_output_equals "output"
+  assert_run_error_equals "error"
+}
+```
+
+```output
+	Running test_complete_command_verification ... SUCCESS
 ```
 
 == *skip_if* function
