@@ -204,6 +204,11 @@ test_one_test_should_stop_when_assert_fails() {
     "$($BASH_UNIT <(echo 'test_fail() { echo "before failure" >&2 ; assert false ; echo "after failure" >&2 ; }') 2>&1 >/dev/null)"
 }
 
+test_failure_status_printed_after_test_name() {
+  assert_matches "Running test_fail_should_print_failure ... FAILURE"$'\n'"Overall result: FAILURE" \
+    "$($BASH_UNIT <(echo 'test_fail_should_print_failure() { false; }'))"
+}
+
 setup() {
   # fake basic unix commands bash_unit relies on so that
   # we ensure bash_unit keeps working when people fake

@@ -55,7 +55,8 @@ fail() {
   [[ -n "$stderr" ]] && [ -s "$stderr" ] && notify_stderr < "$stderr"
 
   stacktrace | notify_stack
-  exit 1
+  # Exit with special code 99 to signal that notify_test_failed was already called
+  exit 99
 }
 
 assert() {
@@ -303,8 +304,12 @@ run_test() {
   )
   local status=$?
   if (( status != 0 )); then
-    # notify_test_failed "$__bash_unit_current_test__"
-    exit $status
+    # Check if fail() was called (exit code 99 means notification already done)
+    if [[ ${status} -ne 99 ]]; then
+      notify_test_failed "$__bash_unit_current_test__"
+    fi
+    # Always exit with 1 for failure
+    exit 1
   else
     notify_test_succeeded "$__bash_unit_current_test__"
   fi
