@@ -780,7 +780,7 @@ test_command_fails_when_expected_success(){
 
 ```output
 	Running test_command_fails_when_expected_success ... FAILURE
-expected run command to succeed but status was 1
+ expected [0] but was [1]
 doc:8:test_command_fails_when_expected_success()
 	Running test_command_succeeds ... SUCCESS
 ```
@@ -806,7 +806,7 @@ test_command_succeeds_when_expected_failure(){
 ```output
 	Running test_command_fails ... SUCCESS
 	Running test_command_succeeds_when_expected_failure ... FAILURE
-expected run command to fail but status was 0
+ expected different value than [0] but was the same
 doc:8:test_command_succeeds_when_expected_failure()
 ```
 
@@ -831,7 +831,7 @@ test_wrong_exit_code(){
 ```output
 	Running test_specific_exit_code ... SUCCESS
 	Running test_wrong_exit_code ... FAILURE
-expected run command to have status code 0 but was 1
+ expected [0] but was [1]
 doc:8:test_wrong_exit_code()
 ```
 
@@ -855,7 +855,7 @@ test_output_differs(){
 
 ```output
 	Running test_output_differs ... FAILURE
-expected run output [expected] but was [actual]
+ expected [expected] but was [actual]
 doc:8:test_output_differs()
 	Running test_output_matches ... SUCCESS
 ```
@@ -880,7 +880,7 @@ test_output_does_not_match(){
 
 ```output
 	Running test_output_does_not_match ... FAILURE
-expected run output to match regex [Error:] but was [Success]
+ expected regex [Error:] to match [Success]
 doc:8:test_output_does_not_match()
 	Running test_output_matches_pattern ... SUCCESS
 ```
@@ -905,7 +905,7 @@ test_error_differs(){
 
 ```output
 	Running test_error_differs ... FAILURE
-expected run error [expected error] but was [actual error]
+ expected [expected error] but was [actual error]
 doc:8:test_error_differs()
 	Running test_error_matches ... SUCCESS
 ```
@@ -930,7 +930,7 @@ test_error_does_not_match(){
 
 ```output
 	Running test_error_does_not_match ... FAILURE
-expected run error to match regex [Warning:] but was [Info: all good]
+ expected regex [Warning:] to match [Info: all good]
 doc:8:test_error_does_not_match()
 	Running test_error_matches_pattern ... SUCCESS
 ```

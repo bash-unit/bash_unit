@@ -222,71 +222,36 @@ run() {
 }
 
 assert_run_success() {
-  local message=${1:-}
-  [[ -z $message ]] || message="$message\n"
-
-  if [ "$BASH_UNIT_RUN_STATUS" != 0 ]; then
-    fail "${message}expected run command to succeed but status was $BASH_UNIT_RUN_STATUS"
-  fi
+  assert_equals 0 "$BASH_UNIT_RUN_STATUS" "${1:-}"
 }
 
 assert_run_fails() {
-  local message=${1:-}
-  [[ -z $message ]] || message="$message\n"
-
-  if [ "$BASH_UNIT_RUN_STATUS" == 0 ]; then
-    fail "${message}expected run command to fail but status was 0"
-  fi
+  assert_not_equals 0 "$BASH_UNIT_RUN_STATUS" "${1:-}"
 }
 
 assert_run_status_code() {
   local expected=$1
-  local message=${2:-}
-  [[ -z $message ]] || message="$message\n"
-
-  if [ "$BASH_UNIT_RUN_STATUS" != "$expected" ]; then
-    fail "${message}expected run command to have status code $expected but was $BASH_UNIT_RUN_STATUS"
-  fi
+  assert_equals "$expected" "$BASH_UNIT_RUN_STATUS" "${2:-}"
 }
 
 assert_run_output_equals() {
   local expected=$1
-  local message=${2:-}
-  [[ -z $message ]] || message="$message\n"
-
-  if [ "$expected" != "$BASH_UNIT_RUN_OUTPUT" ]; then
-    fail "${message}expected run output [$expected] but was [$BASH_UNIT_RUN_OUTPUT]"
-  fi
+  assert_equals "$expected" "$BASH_UNIT_RUN_OUTPUT" "${2:-}"
 }
 
 assert_run_output_matches() {
   local pattern=$1
-  local message=${2:-}
-  [[ -z $message ]] || message="$message\n"
-
-  if [[ ! "$BASH_UNIT_RUN_OUTPUT" =~ $pattern ]]; then
-    fail "${message}expected run output to match regex [$pattern] but was [$BASH_UNIT_RUN_OUTPUT]"
-  fi
+  assert_matches "$pattern" "$BASH_UNIT_RUN_OUTPUT" "${2:-}"
 }
 
 assert_run_error_equals() {
   local expected=$1
-  local message=${2:-}
-  [[ -z $message ]] || message="$message\n"
-
-  if [ "$expected" != "$BASH_UNIT_RUN_ERROR" ]; then
-    fail "${message}expected run error [$expected] but was [$BASH_UNIT_RUN_ERROR]"
-  fi
+  assert_equals "$expected" "$BASH_UNIT_RUN_ERROR" "${2:-}"
 }
 
 assert_run_error_matches() {
   local pattern=$1
-  local message=${2:-}
-  [[ -z $message ]] || message="$message\n"
-
-  if [[ ! "$BASH_UNIT_RUN_ERROR" =~ $pattern ]]; then
-    fail "${message}expected run error to match regex [$pattern] but was [$BASH_UNIT_RUN_ERROR]"
-  fi
+  assert_matches "$pattern" "$BASH_UNIT_RUN_ERROR" "${2:-}"
 }
 
 fake() {
