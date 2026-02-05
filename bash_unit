@@ -248,14 +248,16 @@ run_tests() {
 
   local all_functions=$(set)
 
-  local pending_tests=$(echo "$all_functions" | "$GREP"  -E '^(pending|todo).* \(\)' | "$GREP" -E "$test_pattern" | "$SED" -e 's: .*::')
+  local pending_tests=$(echo "$all_functions" | "$GREP" -E '^(pending|todo).* \(\)' | "$GREP" -E "$test_pattern" | "$GREP" -oE '^[^ ]+')
+  local matched_tests=$(echo "$all_functions" | "$GREP" -E '^test.* \(\)' | "$GREP" -E "$test_pattern")
+
   if [[ -n "$skip_pattern" ]]
   then
-    local skipped_tests=$(echo "$all_functions" | "$GREP"  -E '^test.* \(\)' | "$GREP" -E "$test_pattern" | "$GREP" -E "$skip_pattern" | "$SED" -e 's: .*::')
-    local tests_to_run="$(echo "$all_functions" | "$GREP"  -E '^test.* \(\)' | "$GREP" -E "$test_pattern" | "$GREP" -v -E "$skip_pattern" | "$SED" -e 's: .*::' | maybe_shuffle)"
+    local skipped_tests=$(echo "$matched_tests" | "$GREP" -E "$skip_pattern" | "$GREP" -oE '^[^ ]+')
+    local tests_to_run=$(echo "$matched_tests" | "$GREP" -v -E "$skip_pattern" | "$GREP" -oE '^[^ ]+' | maybe_shuffle)
   else
     local skipped_tests=""
-    local tests_to_run="$(echo "$all_functions" | "$GREP"  -E '^test.* \(\)' | "$GREP" -E "$test_pattern" |  "$SED" -e 's: .*::' | maybe_shuffle)"
+    local tests_to_run=$(echo "$matched_tests" | "$GREP" -oE '^[^ ]+' | maybe_shuffle)
   fi
 
   local test_count=$(cat "${TEST_COUNT_FILE}")
