@@ -276,15 +276,15 @@ run_tests() {
     notify_test_skipped "$skipped_test"
   done
 
+  local has_setup=0 has_teardown=0
+  declare -F | "$GREP" ' setup$' >/dev/null && has_setup=1
+  declare -F | "$GREP" ' teardown$' >/dev/null && has_teardown=1
+
   for test in $tests_to_run
   do
     (
       local status=0
-      declare -F | "$GREP" ' setup$' >/dev/null && setup
-      # make sure teardown runs even if the test fails
-      local has_teardown=0
-      # shellcheck disable=SC2034  # foo appears unused. Verify it or export it.
-      declare -F | "$GREP" ' teardown$' >/dev/null && has_teardown=1
+      ((has_setup)) && setup
       trap '((has_teardown)) && teardown' EXIT
 
       # NOTE: we do *not* want to use the || or && syntax with the subshell
