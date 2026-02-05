@@ -278,6 +278,7 @@ run_tests() {
 
   local has_setup=0 has_teardown=0
   declare -F | "$GREP" ' setup$' >/dev/null && has_setup=1
+  # shellcheck disable=SC2034
   declare -F | "$GREP" ' teardown$' >/dev/null && has_teardown=1
 
   for test in $tests_to_run
