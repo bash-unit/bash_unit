@@ -1,14 +1,35 @@
 name: bash_unit tests
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   ubuntu:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Unit testing with bash_unit
-      run: FORCE_COLOR=true ./bash_unit tests/test*
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: docker://kcov/kcov:latest
+        with:
+          entrypoint: sh
+          args: >-
+            -ceux
+            "cd tests && kcov
+            --bash-parse-files-in-dir=..
+            --include-pattern=bash_unit
+            --exclude-pattern=/tests/
+            ../coverage
+            ../bash_unit test*.sh"
+      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        if: ${{ !cancelled() }}
+        with:
+          use_oidc: true
+          files: ./coverage/bash_unit.*/cobertura.xml
+          disable_search: true

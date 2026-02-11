@@ -57,7 +57,7 @@ repos:
         args:
           - --no-warnings
           - -d
-          - '{extends: relaxed, rules: {line-length: {max: 120}}}'
+          - "{extends: relaxed, rules: {line-length: {max: 120}}}"
 
   # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
   - repo: https://github.com/codespell-project/codespell
@@ -68,14 +68,14 @@ repos:
           - --ignore-words-list=master,als
           - --builtin=clear,rare,informal,usage,code,names,en-GB_to_en-US
         exclude_types: [image]
-        exclude: ^docs/man/.*$
+        exclude: ^(docs/man/|coverage/).*$
 
   # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.6
     hooks:
       - id: shellcheck
-        args: [-W, '100']
+        args: [-W, "100"]
 
   # Run tests
   - repo: local

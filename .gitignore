@@ -3,3 +3,6 @@ token
 
 # BSD sed generated files
 *-e
+
+# Coverage output
+coverage/
