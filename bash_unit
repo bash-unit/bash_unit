@@ -195,6 +195,66 @@ assert_no_diff() {
     "$message expected '${actual}' to be identical to '${expected}' but was different"
 }
 
+#
+# Run command wrapper with output assertions
+#
+
+BASH_UNIT_RUN_STATUS=""
+BASH_UNIT_RUN_OUTPUT=""
+BASH_UNIT_RUN_ERROR=""
+
+run() {
+  BASH_UNIT_RUN_STATUS=""
+  BASH_UNIT_RUN_OUTPUT=""
+  BASH_UNIT_RUN_ERROR=""
+
+  local stdout=$(mktemp)
+  local stderr=$(mktemp)
+  # shellcheck disable=2064
+  trap "$RM -f \"$stdout\" \"$stderr\"" EXIT
+
+  BASH_UNIT_RUN_STATUS=0
+  "$@" >"$stdout" 2>"$stderr" || BASH_UNIT_RUN_STATUS=$?
+  BASH_UNIT_RUN_OUTPUT=$("$CAT" "$stdout")
+  BASH_UNIT_RUN_ERROR=$("$CAT" "$stderr")
+
+  "$RM" -f "$stdout" "$stderr"
+  trap - EXIT
+}
+
+assert_run_success() {
+  assert_equals 0 "$BASH_UNIT_RUN_STATUS" "${1:-}"
+}
+
+assert_run_fails() {
+  assert_not_equals 0 "$BASH_UNIT_RUN_STATUS" "${1:-}"
+}
+
+assert_run_status_code() {
+  local expected=$1
+  assert_equals "$expected" "$BASH_UNIT_RUN_STATUS" "${2:-}"
+}
+
+assert_run_output_equals() {
+  local expected=$1
+  assert_equals "$expected" "$BASH_UNIT_RUN_OUTPUT" "${2:-}"
+}
+
+assert_run_output_matches() {
+  local pattern=$1
+  assert_matches "$pattern" "$BASH_UNIT_RUN_OUTPUT" "${2:-}"
+}
+
+assert_run_error_equals() {
+  local expected=$1
+  assert_equals "$expected" "$BASH_UNIT_RUN_ERROR" "${2:-}"
+}
+
+assert_run_error_matches() {
+  local pattern=$1
+  assert_matches "$pattern" "$BASH_UNIT_RUN_ERROR" "${2:-}"
+}
+
 fake() {
   local command=$1
   shift

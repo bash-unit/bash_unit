@@ -352,3 +352,112 @@ mute() {
   notify_suites_succeeded () { : ; }
   notify_suites_failed   () { : ; }
 }
+
+#
+# Tests for run command wrapper and assert_run_* functions
+#
+
+test_run_clears_previous_state() {
+  run echo "first"
+  run echo "second"
+  assert_run_output_equals "second"
+}
+
+test_run_handles_command_with_arguments() {
+  run echo "arg1" "arg2" "arg3"
+  assert_run_output_equals "arg1 arg2 arg3"
+}
+
+test_run_handles_commands_with_pipes() {
+  run sh -c 'echo "test" | tr "t" "T"'
+  assert_run_output_equals "TesT"
+}
+
+test_run_combined_assertions() {
+  run sh -c 'echo "out"; echo "err" >&2; exit 3'
+  assert_run_status_code 3
+  assert_run_output_equals "out"
+  assert_run_error_equals "err"
+}
+
+test_assert_run_success_succeeds() {
+  run true
+  assert_run_success
+}
+
+test_assert_run_success_fails_when_nonzero() {
+  run false
+  assert_fails "with_bash_unit_muted assert_run_success"
+}
+
+test_assert_run_success_shows_custom_message() {
+  run false
+  message=$(with_bash_unit_log assert_run_success "custom message") || true
+  assert_matches "custom message" "$message"
+}
+
+test_assert_run_fails_succeeds() {
+  run false
+  assert_run_fails
+}
+
+test_assert_run_fails_fails_when_zero() {
+  run true
+  assert_fails "with_bash_unit_muted assert_run_fails"
+}
+
+test_assert_run_status_code_succeeds() {
+  run sh -c 'exit 42'
+  assert_run_status_code 42
+}
+
+test_assert_run_status_code_fails_when_mismatch() {
+  run sh -c 'exit 42'
+  assert_fails "with_bash_unit_muted assert_run_status_code 0"
+}
+
+test_assert_run_output_equals_succeeds() {
+  run echo "expected"
+  assert_run_output_equals "expected"
+}
+
+test_assert_run_output_equals_fails_when_mismatch() {
+  run echo "actual"
+  assert_fails "with_bash_unit_muted assert_run_output_equals 'expected'"
+}
+
+test_assert_run_output_equals_handles_multiline() {
+  run echo -e "line1\nline2"
+  assert_run_output_equals "line1
+line2"
+}
+
+test_assert_run_output_matches_succeeds() {
+  run echo "prefix-123-suffix"
+  assert_run_output_matches "^prefix-[0-9]+-suffix$"
+}
+
+test_assert_run_output_matches_fails_when_no_match() {
+  run echo "no numbers"
+  assert_fails "with_bash_unit_muted assert_run_output_matches '[0-9]+'"
+}
+
+test_assert_run_error_equals_succeeds() {
+  run sh -c 'echo "error" >&2'
+  assert_run_error_equals "error"
+}
+
+test_assert_run_error_equals_fails_when_mismatch() {
+  run sh -c 'echo "actual" >&2'
+  assert_fails "with_bash_unit_muted assert_run_error_equals 'expected'"
+}
+
+test_assert_run_error_matches_succeeds() {
+  run sh -c 'echo "Error: not found" >&2'
+  assert_run_error_matches "Error:.*not found"
+}
+
+test_assert_run_error_matches_fails_when_no_match() {
+  run sh -c 'echo "warning" >&2'
+  assert_fails "with_bash_unit_muted assert_run_error_matches 'Error:'"
+}
